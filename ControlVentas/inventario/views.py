@@ -6,7 +6,7 @@ from .forms import ProductoForm, ClienteForm, VentaForm
 
 def lista_productos(request):
     productos = Producto.objects.filter(activo=True)
-    return render(request, 'ventas/lista_productos.html', {'productos': productos})
+    return render(request, 'inventario/lista_productos.html', {'productos': productos})
 
 def agregar_producto(request):
     if request.method == 'POST':
@@ -17,7 +17,7 @@ def agregar_producto(request):
             return redirect('lista_productos')
     else:
         form = ProductoForm()
-    return render(request, 'ventas/agregar_producto.html', {'form': form})
+    return render(request, 'inventario/agregar_producto.html', {'form': form})
 
 def editar_producto(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
@@ -29,7 +29,7 @@ def editar_producto(request, pk):
             return redirect('lista_productos')
     else:
         form = ProductoForm(instance=producto)
-    return render(request, 'ventas/editar_producto.html', {'form': form, 'producto': producto})
+    return render(request, 'inventario/editar_producto.html', {'form': form, 'producto': producto})
 
 def eliminar_producto(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
@@ -38,9 +38,8 @@ def eliminar_producto(request, pk):
         producto.save()
         messages.success(request, 'Producto eliminado correctamente.')
         return redirect('lista_productos')
-    return render(request, 'ventas/eliminar_producto.html', {'producto': producto})
+    return render(request, 'inventario/eliminar_producto.html', {'producto': producto})
 
-@transaction.atomic
 def registrar_venta(request):
     if request.method == 'POST':
         form = VentaForm(request.POST)
@@ -82,7 +81,7 @@ def registrar_venta(request):
     else:
         form = VentaForm()
     
-    return render(request, 'ventas/registrar_venta.html', {'form': form})
+    return render(request, 'inventario/registrar_venta.html', {'form': form})
 
 def registrar_cliente_con_rut(request, rut):
     # Vista para completar datos del cliente cuando quiere ser habitual
@@ -98,8 +97,8 @@ def registrar_cliente_con_rut(request, rut):
     else:
         form = ClienteForm(initial={'rut': rut})
     
-    return render(request, 'ventas/registrar_cliente.html', {'form': form})
+    return render(request, 'inventario/registrar_cliente.html', {'form': form})
 
 def lista_ventas(request):
     ventas = Venta.objects.all()
-    return render(request, 'ventas/lista_ventas.html', {'ventas': ventas})
+    return render(request, 'inventario/lista_ventas.html', {'ventas': ventas})
