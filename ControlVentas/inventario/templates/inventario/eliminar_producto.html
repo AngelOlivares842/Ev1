@@ -6,20 +6,24 @@ Eliminar Producto - Control de Ventas
 
 {% block content %}
 <div class="max-w-md mx-auto">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Eliminar Producto</h1>
-    
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Eliminar Producto</h1> 
     <div class="bg-white shadow-md rounded-lg p-6">
         <p class="text-gray-700 mb-4">¿Estás seguro de que deseas eliminar el producto <strong>{{ producto.nombre }}</strong>?</p>
-        
+        <!-- Mensaje de confirmación que muestra el nombre del producto a eliminar -->
         <form method="post">
+            <!-- Formulario POST para enviar la acción de eliminación -->
             {% csrf_token %}
-            <div class="flex items-center justify-between">
+            <!-- Token de seguridad requerido por Django -->   
+            <div class="flex items-center justify-between">              
                 <a href="{% url 'lista_productos' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                     Cancelar
                 </a>
+                <!-- Botón Cancelar: redirige a la lista de productos sin eliminar -->
+                
                 <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                     Eliminar
                 </button>
+                <!-- Botón Eliminar: envía el formulario POST para confirmar la eliminación -->
             </div>
         </form>
     </div>

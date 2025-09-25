@@ -33,13 +33,16 @@ Productos - Control de Ventas
                 <td class="px-6 py-4 whitespace-nowrap">
                     <a href="{% url 'editar_producto' producto.pk %}" class="text-yellow-600 hover:text-yellow-800 mr-3">
                         <i class="fas fa-edit"></i> Editar
+                        {% comment %} Enlace para editar producto (usa la primary key como identificador) {% endcomment %}
                     </a>
                     <a href="{% url 'eliminar_producto' producto.pk %}" class="text-red-600 hover:text-red-800">
                         <i class="fas fa-trash"></i> Eliminar
+                        {% comment %} Enlace para eliminar producto (redirige a página de confirmación) {% endcomment %}
                     </a>
                 </td>
             </tr>
             {% empty %}
+            {% comment %} Bloque que se muestra cuando no hay productos {% endcomment %}
             <tr>
                 <td colspan="5" class="px-6 py-4 text-center text-gray-500">No hay productos registrados</td>
             </tr>

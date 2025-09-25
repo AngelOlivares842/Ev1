@@ -6,37 +6,46 @@ Registrar Cliente - Control de Ventas
 
 {% block content %}
 <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Registrar Cliente Habitual</h1>
-    
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Registrar Cliente Habitual</h1> 
     <div class="bg-white shadow-md rounded-lg p-6">
         <form method="post">
+            <!-- Formulario POST para enviar datos del cliente -->
             {% csrf_token %}
+            <!-- Token de seguridad CSRF -->
             
             {% for field in form %}
+            <!-- Itera a través de todos los campos del formulario -->
             <div class="mb-4">
+                <!-- Contenedor para cada campo -->
                 <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">
                     {{ field.label }}
                 </label>
                 {{ field }}
+                <!-- Renderiza el campo del formulario (input, select, etc.) -->
                 {% if field.errors %}
+                <!-- Si hay errores de validación en el campo -->
                 <p class="text-red-500 text-xs italic mt-1">{{ field.errors.0 }}</p>
                 {% endif %}
             </div>
             {% endfor %}
             
             <div class="flex items-center justify-between mt-6">
+                <!-- Contenedor de botones de acción -->
                 <a href="{% url 'registrar_venta' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                     Cancelar
                 </a>
+                <!-- Botón Cancelar: vuelve a la página de registro de ventas -->
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Registrar Cliente
-                </button>
+                </a>
+                <!-- Botón Registrar: envía el formulario para crear el cliente -->
             </div>
         </form>
     </div>
 </div>
 
 <style>
+    /* Estilos básicos para los campos del formulario */
     input, select, textarea {
         width: 100%;
         padding: 0.5rem;
@@ -47,8 +56,6 @@ Registrar Cliente - Control de Ventas
     
     input:focus, select:focus, textarea:focus {
         outline: none;
-        ring: 2px;
-        ring-blue-500;
         border-color: #3b82f6;
     }
 </style>

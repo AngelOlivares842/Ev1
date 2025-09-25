@@ -4,33 +4,54 @@
 Control de Ventas
 {% endblock %}
 
-
 {% block content %}
+
 <div class="max-w-2xl mx-auto">
+    <!-- Contenedor principal con ancho máximo y centrado -->
     <h1 class="text-3xl font-bold text-gray-800 mb-6">{{ title }}</h1>
     
     <div class="bg-white shadow-md rounded-lg p-6">
         <form method="post">
+            <!--
+              Formulario que enviará datos por POST.
+              Importante: En Django siempre debe incluirse {% csrf_token %} en formularios POST
+            -->
             {% csrf_token %}
+            <!-- Token de seguridad de Django para protección CSRF -->
             
             {% for field in form %}
+            <!-- Itera por cada campo del formulario pasado desde la vista -->
             <div class="mb-4">
                 <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">
                     {{ field.label }}
                 </label>
                 {{ field }}
+                <!--
+                  Renderiza el campo del formulario (input, select, etc.)
+                  Django automáticamente genera el HTML correspondiente
+                -->
                 {% if field.errors %}
+                <!-- Si el campo tiene errores de validación -->
                 <p class="text-red-500 text-xs italic mt-1">{{ field.errors.0 }}</p>
                 {% endif %}
             </div>
             {% endfor %}
             
             <div class="flex items-center justify-between mt-6">
+                <!--
+                  Contenedor de botones
+                -->
                 <a href="{% url 'lista_productos' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                     Cancelar
+                    <!--
+                      Botón Cancelar que redirige a la lista de productos.
+                    -->
                 </a>
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Guardar
+                    <!--
+                      Botón principal de envío del formulario.
+                    -->
                 </button>
             </div>
         </form>
@@ -38,19 +59,20 @@ Control de Ventas
 </div>
 
 <style>
+    /* Estilos personalizados para los campos del formulario */
     input, select {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #d1d5db;
-        border-radius: 0.375rem;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        width: 100%; /* Ancho completo del contenedor */
+        padding: 0.5rem; /* Espaciado interno */
+        border: 1px solid #d1d5db; /* Borde gris */
+        border-radius: 0.375rem; /* Bordes redondeados equivalentes a rounded en Tailwind */
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Sombra sutil */
     }
     
     input:focus, select:focus {
-        outline: none;
-        ring: 2px;
-        ring-blue-500;
-        border-color: #3b82f6;
+        outline: none; /* Elimina el contorno por defecto */
+        ring: 2px; /* Intento de aplicar anillo de enfoque (no estándar) */
+        ring-blue-500; /* Color del anillo (requiere Tailwind para funcionar correctamente) */
+        border-color: #3b82f6; /* Color de borde azul al enfocar */
     }
 </style>
 {% endblock %}

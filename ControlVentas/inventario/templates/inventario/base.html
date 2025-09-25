@@ -3,23 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sistema de Control de Ventas{% endblock %}</title>
-    <!-- Tailwind CSS CDN -->
+    <title>
+        {% block title %}
+            Sistema de Control de Ventas
+        {% endblock %}
+    </title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Alpine.js para interactividad -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Iconos (Font Awesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
-    <!-- Navbar -->
+    {% comment %} Navbar {% endcomment %}
     <nav class="bg-blue-600 text-white shadow-lg">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <a href="{% url 'lista_productos' %}" class="text-xl font-bold">
                     <i class="fas fa-store mr-2"></i>Control de Ventas
                 </a>
-                
+                {% comment %} variables de la barra de busqueda {% endcomment %}
                 <div class="hidden md:flex space-x-6">
                     <a href="{% url 'lista_productos' %}" class="hover:text-blue-200 transition duration-300">
                         <i class="fas fa-box mr-1"></i> Productos
@@ -32,15 +34,14 @@
                     </a>
                 </div>
                 
-                <!-- Mobile menu button -->
+                 {% comment %} Menú móvil desplegable (oculto por defecto) {% endcomment %}
                 <div class="md:hidden">
                     <button id="mobile-menu-button" class="text-white focus:outline-none">
                         <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
-            
-            <!-- Mobile menu (hidden by default) -->
+    
             <div id="mobile-menu" class="hidden pb-4 md:hidden">
                 <a href="{% url 'lista_productos' %}" class="block py-2 hover:bg-blue-500 px-4 rounded">
                     <i class="fas fa-box mr-2"></i> Productos
@@ -55,9 +56,9 @@
         </div>
     </nav>
 
-    <!-- Contenido principal -->
+     {% comment %} Contenido principal {% endcomment %}
     <main class="container mx-auto px-4 py-8 flex-grow">
-        <!-- Mensajes de Django -->
+         {% comment %} Mensajes de Django {% endcomment %}
         {% if messages %}
             <div class="mb-6">
                 {% for message in messages %}
@@ -71,27 +72,11 @@
             </div>
         {% endif %}
 
-        <!-- Bloque de contenido -->
+        {% comment %} Bloque de contenido {% endcomment %}
         {% block content %}
         {% endblock %}
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-6 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <h3 class="text-lg font-semibold">Sistema de Control de Ventas</h3>
-                    <p class="text-gray-400">Gestión de inventario y ventas</p>
-                </div>
-                <div>
-                    <p class="text-gray-400">© {% now "Y" %} - Todos los derechos reservados</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript para funcionalidades -->
+    {% comment %} JavaScript para funcionalidades {% endcomment %}
     <script>
         // Toggle mobile menu
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
@@ -114,7 +99,7 @@
         }, 5000);
     </script>
     
-    <!-- Scripts adicionales por página -->
+    {% comment %} Scripts adicionales por página {% endcomment %}
     {% block extra_js %}
     {% endblock %}
 </body>
