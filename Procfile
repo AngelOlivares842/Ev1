@@ -1,0 +1,1 @@
+web: ControlVentas.wsgi --log-file -
