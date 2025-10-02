@@ -1,1 +1,1 @@
-web: gunicorn.wsgi --log-file -
+web: ControlVentas.wsgi
