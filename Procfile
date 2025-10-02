@@ -1,2 +1,2 @@
-web: gunicorn.wsgi
+web: gunicorn ControlVentas
 release: python manage.py migrate
