@@ -1,1 +1,1 @@
-web: ControlVentas.wsgi --log-file -
+web: ControlVentas.ControlVentas.wsgi --log-file -
