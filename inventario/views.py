@@ -5,7 +5,7 @@ from .forms import ProductoForm, ClienteForm, VentaForm
 
 def lista_productos(request):
     #Muestra lista de productos activos en el sistema
-    productos = Producto.objects.filter(activo=True)
+    productos = Producto.objects.all()
     return render(request, 'inventario/lista_productos.html', {'productos': productos})
 
 def agregar_producto(request):
