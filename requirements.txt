@@ -2,5 +2,3 @@ Django
 gunicorn
 whitenoise
 psycopg2-binary
-
-python manage.py makemigrations
