@@ -51,8 +51,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'ControlVentas.urls'
@@ -77,13 +75,32 @@ WSGI_APPLICATION = 'ControlVentas.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
+
+
+# MongoDB Atlas Configuration
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'Ventas',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb+srv://angelolivares04_db_user:uNPyzFS4vLhm2qge@ventas.x3mb8y.mongodb.net/Ventas?retryWrites=true&w=majority&appName=Ventas',
+            'username': 'angelolivares04_db_user',
+            'password': 'uNPyzFS4vLhm2qge',
+            'authSource': 'admin',
+            'authMechanism': 'SCRAM-SHA-1',
         }
     }
+}
 
+# Si tienes problemas con campos Decimal, puedes agregar:
+DJONGO_DECIMAL_FIELDS = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
