@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: controlventas-web
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn ControlVentas.wsgi"
+    autoDeploy: true
+    healthCheckPath: "/"
+    # Do NOT put secrets here. Set them in the Render dashboard (Environment -> Environment Regions/Variables).
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: ControlVentas.settings
+        # scope: environment
+
+hooks:
+  postdeploy:
+    - python manage.py migrate
+    - python manage.py collectstatic --noinput
+
+# Notes:
+# - On Render, set the DATABASE_URL environment variable (recommended) to:
+#   postgres://<user>:<password>@<host>:<port>/<dbname>
+# - Alternatively, set individual env vars: user, password, host, port, dbname and PGSSLMODE=require
+# - Set SECRET_KEY and any other required secrets via the web dashboard, not in this file.

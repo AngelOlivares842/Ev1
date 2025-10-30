@@ -10,9 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from pathlib import Path
-import os
 from dotenv import load_dotenv
+from pathlib import Path
+import dj_database_url
+import os
 load_dotenv()
 
 
@@ -77,19 +78,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ControlVentas.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        "USER": os.getenv("user"),
-        "PASSWORD": os.getenv("password"),
-        "HOST": os.getenv("host"),
-        "PORT": os.getenv("port"),
-        'NAME': os.getenv("dbname"),
-        # Some hosted Postgres providers (Supabase, Heroku) require SSL.
-        # If you get SSL errors when connecting, keep this option. Otherwise it's harmless.
-        'OPTIONS': {'sslmode': os.getenv('PGSSLMODE', 'require')},
+# Support DATABASE_URL (recommended on Render/Heroku) but fall back to individual env vars.
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    # dj_database_url.parse returns a dict suitable for Django DATABASES
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True),
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv("dbname"),
+            'USER': os.getenv("user"),
+            'PASSWORD': os.getenv("password"),
+            'HOST': os.getenv("host"),
+            'PORT': os.getenv("port"),
+            # Some hosted Postgres providers (Supabase, Heroku) require SSL.
+            'OPTIONS': {'sslmode': os.getenv('PGSSLMODE', 'require')},
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
