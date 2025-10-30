@@ -4,11 +4,12 @@ services:
     env: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
-  # Bind to Render port, limit workers and increase timeout to avoid worker timeouts
-  # during DB connection retries. Render sets $PORT automatically.
-  startCommand: "gunicorn ControlVentas.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+    # Bind to Render port, limit workers and increase timeout to avoid worker timeouts
+    # during DB connection retries. Render sets $PORT automatically.
+    # Use 1 worker to reduce memory on free plan and avoid OOM.
+    startCommand: "gunicorn ControlVentas.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120"
     autoDeploy: true
-    healthCheckPath: "/"
+    healthCheckPath: "/health"
     # Do NOT put secrets here. Set them in the Render dashboard (Environment -> Environment Regions/Variables).
     envVars:
       - key: DJANGO_SETTINGS_MODULE

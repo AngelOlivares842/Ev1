@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Producto, Cliente, Venta
 from .forms import ProductoForm, ClienteForm, VentaForm
+from django.http import HttpResponse
 
 def lista_productos(request):
     #Muestra lista de productos activos en el sistema
@@ -112,3 +113,10 @@ def lista_ventas(request):
     #Muestra historial completo de todas las ventas
     ventas = Venta.objects.all()
     return render(request, 'inventario/lista_ventas.html', {'ventas': ventas})
+
+
+def health(request):
+    """Lightweight health check that does NOT touch the database.
+    Used by Render as healthCheckPath to avoid triggering DB queries during checks.
+    """
+    return HttpResponse('ok')
