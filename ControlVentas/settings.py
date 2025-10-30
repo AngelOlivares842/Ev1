@@ -83,7 +83,7 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
     # dj_database_url.parse returns a dict suitable for Django DATABASES
     DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True),
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600),
     }
 else:
     DATABASES = {
@@ -94,8 +94,6 @@ else:
             'PASSWORD': os.getenv("password"),
             'HOST': os.getenv("host"),
             'PORT': os.getenv("port"),
-            # Some hosted Postgres providers (Supabase, Heroku) require SSL.
-            'OPTIONS': {'sslmode': os.getenv('PGSSLMODE', 'require')},
         }
     }
 
