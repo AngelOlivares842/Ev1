@@ -30,7 +30,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 SECRET_KEY = 'django-insecure-jnk4)76l^4+_gs^c$u$a=433s%2f3%1y^8@9spf^g64pl(4z=='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '.herokuapp.com', 'ventas.kalwrd.me', 'ev1-c25t.onrender.com']
 
@@ -77,26 +77,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ControlVentas.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.environ.get('DATABASE_URL'),
-#         conn_max_age=600,
-#         # ssl_require=True
-#     )
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         "USER": os.getenv("user"),
         "PASSWORD": os.getenv("password"),
         "HOST": os.getenv("host"),
-        "PORT":os.getenv("port"),  
-        'DBNAME': os.getenv("dbname"),
+        "PORT": os.getenv("port"),
+        'NAME': os.getenv("dbname"),
+        # Some hosted Postgres providers (Supabase, Heroku) require SSL.
+        # If you get SSL errors when connecting, keep this option. Otherwise it's harmless.
+        'OPTIONS': {'sslmode': os.getenv('PGSSLMODE', 'require')},
     }
 }
 
