@@ -1,5 +1,6 @@
 from django import forms
-from .models import Producto, Cliente, Venta
+from .models import Producto, Cliente
+
 
 class ProductoForm(forms.ModelForm):
     """Formulario para crear y editar productos"""
@@ -26,28 +27,26 @@ class ClienteForm(forms.ModelForm):
             'es_habitual': forms.CheckboxInput(attrs={'class': 'form-check-input'}),  # Checkbox para cliente habitual
         }
 
-class VentaForm(forms.ModelForm):
-    """Formulario para registrar ventas con campos adicionales para cliente"""
+class VentaForm(forms.Form):
+    """Formulario simple para crear una venta con una sola línea (producto + cantidad).
+
+    Nota: para múltiples líneas se puede usar un formset o una UI más compleja.
+    """
     rut_cliente = forms.CharField(
-        max_length=12, 
-        required=True,  # RUT obligatorio para ventas
+        max_length=12,
+        required=True,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'RUT del cliente'})
     )
     es_cliente_habitual = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        label='¿Es cliente habitual?'  # Identifica si el cliente es habitual
+        label='¿Es cliente habitual?'
     )
-    
-    class Meta:
-        model = Venta
-        fields = ['producto', 'cantidad_vendida']  # Campos básicos de la venta
-        widgets = {
-            'producto': forms.Select(attrs={'class': 'form-control'}),
-            'cantidad_vendida': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),  # Mínimo 1 unidad
-        }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Filtra productos: solo muestra aquellos con stock disponible y activos
-        self.fields['producto'].queryset = Producto.objects.filter(cantidad__gt=0, activo=True)
+    producto = forms.ModelChoiceField(
+        queryset=Producto.objects.filter(cantidad__gt=0, activo=True),
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    cantidad_vendida = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'})
+    )

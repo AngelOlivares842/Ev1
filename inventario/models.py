@@ -1,55 +1,70 @@
-from django.db import models
+from django.db import models, transaction
 from django.core.validators import MinValueValidator
+
 
 class Producto(models.Model):
     """Modelo para almacenar información de productos en inventario"""
-    codigo = models.CharField(max_length=50, unique=True)  # Código único del producto
-    nombre = models.CharField(max_length=100)  # Nombre del producto
-    cantidad = models.IntegerField(validators=[MinValueValidator(0)])  # Stock disponible (no negativo)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)  # Precio con 2 decimales
-    activo = models.BooleanField(default=True)  # Estado del producto (activo/inactivo)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)  # Fecha de registro automática
-    
+    codigo = models.CharField(max_length=50, unique=True)
+    nombre = models.CharField(max_length=100)
+    cantidad = models.IntegerField(validators=[MinValueValidator(0)])
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    activo = models.BooleanField(default=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
     class Meta:
-        ordering = ['nombre']  # Ordenar productos por nombre por defecto
-    
+        ordering = ['nombre']
+
     def __str__(self):
-        return f"{self.nombre} ({self.codigo})"  # Representación legible
+        return f"{self.nombre} ({self.codigo})"
+
 
 class Cliente(models.Model):
     """Modelo para gestionar clientes del sistema"""
-    rut = models.CharField(max_length=12, unique=True)  # RUT único del cliente
-    nombre = models.CharField(max_length=100)  # Nombre completo
-    email = models.EmailField(blank=True, null=True)  # Email opcional
-    telefono = models.CharField(max_length=15, blank=True, null=True)  # Teléfono opcional
-    es_habitual = models.BooleanField(default=False)  # Identificador de cliente frecuente
-    fecha_registro = models.DateTimeField(auto_now_add=True)  # Fecha de registro automática
-    
+    rut = models.CharField(max_length=12, unique=True)
+    nombre = models.CharField(max_length=100)
+    email = models.EmailField(blank=True, null=True)
+    telefono = models.CharField(max_length=15, blank=True, null=True)
+    es_habitual = models.BooleanField(default=False)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
     class Meta:
-        ordering = ['nombre']  # Ordenar clientes por nombre
-    
+        ordering = ['nombre']
+
     def __str__(self):
-        return f"{self.nombre} ({self.rut})"  # Representación legible
+        return f"{self.nombre} ({self.rut})"
+
 
 class Venta(models.Model):
-    """Modelo para registrar transacciones de venta"""
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)  # Producto vendido
-    cliente_rut = models.CharField(max_length=12)  # RUT del cliente (siempre requerido)
-    cliente_nombre = models.CharField(max_length=100, blank=True, null=True)  # Nombre opcional
-    cantidad_vendida = models.IntegerField(validators=[MinValueValidator(1)])  # Mínimo 1 unidad
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)  # Precio al momento de venta
-    total = models.DecimalField(max_digits=10, decimal_places=2)  # Total calculado
-    fecha_venta = models.DateTimeField(auto_now_add=True)  # Fecha automática de venta
-    
+    """Cabecera de venta. El total se calcula sumando los subtotales de sus detalles."""
+    cliente_rut = models.CharField(max_length=12)
+    cliente_nombre = models.CharField(max_length=100, blank=True, null=True)
+    total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    fecha_venta = models.DateTimeField(auto_now_add=True)
+
     class Meta:
-        ordering = ['-fecha_venta']  # Ordenar ventas más recientes primero
-    
-    def save(self, *args, **kwargs):
-        """Sobrescribe save para actualizar stock automáticamente"""
-        if not self.pk:  # Solo si es una nueva venta (no actualización)
-            self.producto.cantidad -= self.cantidad_vendida  # Reduce stock
-            self.producto.save()  # Guarda cambios en producto
-        super().save(*args, **kwargs)  # Guarda la venta
-    
+        ordering = ['-fecha_venta']
+
     def __str__(self):
-        return f"Venta {self.id} - {self.producto.nombre}"  # Representación legible
+        return f"Venta {self.id} - {self.cliente_rut} - {self.fecha_venta:%Y-%m-%d %H:%M}"
+
+    def calcular_total(self):
+        soma = self.detalles.aggregate(sum=models.Sum('subtotal'))['sum'] or 0
+        self.total = soma
+        return self.total
+
+
+class VentaDetalle(models.Model):
+    """Detalle de la venta que referencia un `Producto`. Contiene cantidad, precio al momento y subtotal."""
+    venta = models.ForeignKey(Venta, related_name='detalles', on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
+    cantidad_vendida = models.IntegerField(validators=[MinValueValidator(1)])
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=12, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.producto.nombre} x {self.cantidad_vendida}"
+
+    def save(self, *args, **kwargs):
+        # Asegura el cálculo correcto del subtotal
+        self.subtotal = self.cantidad_vendida * self.precio_unitario
+        super().save(*args, **kwargs)

@@ -53,17 +53,16 @@ def registrar_venta(request):
     if request.method == 'POST':
         form = VentaForm(request.POST)
         if form.is_valid():
-            # Extraer datos validados del formulario
             producto = form.cleaned_data['producto']
             cantidad = form.cleaned_data['cantidad_vendida']
             rut_cliente = form.cleaned_data['rut_cliente']
             es_habitual = form.cleaned_data['es_cliente_habitual']
-            
+
             # Validar stock disponible
             if cantidad > producto.cantidad:
                 messages.error(request, 'Stock insuficiente para realizar la venta.')
                 return redirect('registrar_venta')
-            
+
             # Manejar cliente habitual vs ocasional
             cliente_nombre = None
             if es_habitual:
@@ -73,18 +72,34 @@ def registrar_venta(request):
                 except Cliente.DoesNotExist:
                     # Redirigir a registro si cliente habitual no existe
                     return redirect('registrar_cliente_con_rut', rut=rut_cliente)
-            
-            # Crear registro de venta
-            venta = Venta(
-                producto=producto,
-                cliente_rut=rut_cliente,
-                cliente_nombre=cliente_nombre,
-                cantidad_vendida=cantidad,
-                precio_unitario=producto.precio,
-                total=cantidad * producto.precio
-            )
-            venta.save()  # El método save() actualiza automáticamente el stock
-            
+
+            # Crear venta y detalle de forma transaccional
+            from .models import Venta, VentaDetalle
+            from django.db import transaction
+
+            try:
+                with transaction.atomic():
+                    venta = Venta.objects.create(
+                        cliente_rut=rut_cliente,
+                        cliente_nombre=cliente_nombre,
+                    )
+                    detalle = VentaDetalle.objects.create(
+                        venta=venta,
+                        producto=producto,
+                        cantidad_vendida=cantidad,
+                        precio_unitario=producto.precio,
+                    )
+                    # VentaDetalle.save() calcula subtotal
+                    # Actualizar stock
+                    producto.cantidad -= cantidad
+                    producto.save()
+                    # Calcular total y guardar
+                    venta.calcular_total()
+                    venta.save()
+            except Exception as e:
+                messages.error(request, f'Error al registrar la venta: {e}')
+                return redirect('registrar_venta')
+
             messages.success(request, f'Venta registrada correctamente. Total: ${venta.total}')
             return redirect('lista_ventas')
     else:

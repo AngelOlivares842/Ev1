@@ -1,6 +1,10 @@
 from django.contrib import admin, messages
 from django.utils import timezone
-from .models import Cliente, Producto, Venta
+from django.urls import path
+from django.http import HttpResponse
+import csv
+
+from .models import Cliente, Producto, Venta, VentaDetalle
 
 
 @admin.action(description='Marcar productos seleccionados como activos')
@@ -72,24 +76,57 @@ def revertir_venta(modeladmin, request, queryset):
 	"""
 	for venta in queryset:
 		try:
-			producto = venta.producto
-			producto.cantidad += venta.cantidad_vendida
-			producto.save()
+			# devolver stock por cada detalle
+			for detalle in venta.detalles.all():
+				producto = detalle.producto
+				producto.cantidad += detalle.cantidad_vendida
+				producto.save()
 		except Exception:
-			# Si no se puede acceder al producto, saltar esa venta
 			continue
-		# eliminar la venta
 		venta.delete()
 
 
+class VentaDetalleInline(admin.TabularInline):
+	model = VentaDetalle
+	extra = 0
+	readonly_fields = ('subtotal', 'precio_unitario')
+	fields = ('producto', 'cantidad_vendida', 'precio_unitario', 'subtotal')
+
+
 class VentaAdmin(admin.ModelAdmin):
-	list_display = ('id', 'producto', 'cliente_rut', 'cliente_nombre', 'cantidad_vendida', 'precio_unitario', 'total', 'fecha_venta')
-	list_filter = ('producto', ('fecha_venta', admin.DateFieldListFilter))
-	search_fields = ('cliente_rut', 'cliente_nombre', 'producto__nombre')
-	readonly_fields = ('fecha_venta',)
+	list_display = ('id', 'cliente_rut', 'cliente_nombre', 'total', 'fecha_venta')
+	list_filter = (('fecha_venta', admin.DateFieldListFilter),)
+	search_fields = ('cliente_rut', 'cliente_nombre', 'detalles__producto__nombre')
+	readonly_fields = ('fecha_venta', 'total')
 	actions = [revertir_venta]
 	date_hierarchy = 'fecha_venta'
+	inlines = [VentaDetalleInline]
 	list_per_page = 50
+
+	def get_urls(self):
+		urls = super().get_urls()
+		custom = [
+			path('reporte-por-fechas/', self.admin_site.admin_view(self.report_por_fechas), name='ventas_reporte_por_fechas'),
+		]
+		return custom + urls
+
+	def report_por_fechas(self, request):
+		"""Genera un CSV simple con ventas entre dos fechas proporcionadas como GET: start, end (YYYY-MM-DD)."""
+		start = request.GET.get('start')
+		end = request.GET.get('end')
+		if not start or not end:
+			# Mostrar una pequeña ayuda si faltan parámetros
+			return HttpResponse("Use ?start=YYYY-MM-DD&end=YYYY-MM-DD para descargar un CSV de ventas en ese rango.")
+
+		qs = Venta.objects.filter(fecha_venta__date__gte=start, fecha_venta__date__lte=end).order_by('fecha_venta')
+		# Crear respuesta CSV
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = f'attachment; filename="ventas_{start}_a_{end}.csv"'
+		writer = csv.writer(response)
+		writer.writerow(['id', 'fecha_venta', 'cliente_rut', 'cliente_nombre', 'total'])
+		for venta in qs:
+			writer.writerow([venta.id, venta.fecha_venta.isoformat(), venta.cliente_rut, venta.cliente_nombre or '', venta.total])
+		return response
 
 
 admin.site.register(Cliente, ClienteAdmin)

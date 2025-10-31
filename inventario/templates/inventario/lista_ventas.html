@@ -24,12 +24,24 @@ Ventas - Control de Ventas
             {% for venta in ventas %}
             <tr>
                 <td class="px-6 py-4 whitespace-nowrap">{{ venta.fecha_venta|date:"d/m/Y H:i" }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ venta.producto.nombre }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    {% for d in venta.detalles.all %}
+                        {{ d.producto.nombre }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        -
+                    {% endfor %}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     {{ venta.cliente_rut }}
                     {% if venta.cliente_nombre %}({{ venta.cliente_nombre }}){% endif %}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ venta.cantidad_vendida }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    {% for d in venta.detalles.all %}
+                        {{ d.cantidad_vendida }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        -
+                    {% endfor %}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">${{ venta.total }}</td>
             </tr>
             {% empty %}
