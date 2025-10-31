@@ -128,6 +128,31 @@ class VentaAdmin(admin.ModelAdmin):
 			writer.writerow([venta.id, venta.fecha_venta.isoformat(), venta.cliente_rut, venta.cliente_nombre or '', venta.total])
 		return response
 
+	def save_related(self, request, form, formsets, change):
+		"""Después de guardar inlines, actualizar total y decrementar stock si es una nueva venta.
+
+		- Si `change` es False (creación), decrementamos stock por cada detalle.
+		- Si `change` es True (edición), no hacemos decremento automático para evitar inconsistencias;
+		  se puede mejorar calculando la diferencia entre cantidades antiguas y nuevas.
+		"""
+		super().save_related(request, form, formsets, change)
+
+		venta = form.instance
+
+		# Si es una creación nueva, decrementar stock según los detalles
+		if not change:
+			for detalle in venta.detalles.all():
+				try:
+					producto = detalle.producto
+					producto.cantidad -= detalle.cantidad_vendida
+					producto.save()
+				except Exception:
+					continue
+
+		# Recalcular y guardar el total
+		venta.calcular_total()
+		venta.save()
+
 
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(Producto, ProductoAdmin)

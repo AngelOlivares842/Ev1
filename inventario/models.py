@@ -66,5 +66,22 @@ class VentaDetalle(models.Model):
 
     def save(self, *args, **kwargs):
         # Asegura el cálculo correcto del subtotal
-        self.subtotal = self.cantidad_vendida * self.precio_unitario
+        # Si no se proporcionó precio_unitario (admin inline u otros), usar el precio actual del producto
+        if self.precio_unitario is None:
+            # producto puede ser None si aún no está relacionado; manejar ese caso
+            if self.producto_id is not None:
+                self.precio_unitario = self.producto.precio
+            else:
+                self.precio_unitario = 0
+
+        # Evitar TypeError si precio_unitario es None
+        self.subtotal = (self.cantidad_vendida or 0) * (self.precio_unitario or 0)
         super().save(*args, **kwargs)
+
+    def clean(self):
+        """Validación: no permitir vender más unidades de las que hay en stock."""
+        from django.core.exceptions import ValidationError
+
+        if self.producto and self.cantidad_vendida:
+            if self.cantidad_vendida > self.producto.cantidad:
+                raise ValidationError({'cantidad_vendida': 'Cantidad mayor al stock disponible.'})
