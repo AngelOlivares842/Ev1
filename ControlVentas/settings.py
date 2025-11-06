@@ -10,18 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
+# import os
+# load_dotenv()
 from pathlib import Path
-import dj_database_url
-import os
-load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Quick-start development settings - unsuitable for production
@@ -79,23 +78,30 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ControlVentas.wsgi.application'
 
 # Support DATABASE_URL (recommended on Render/Heroku) but fall back to individual env vars.
-DATABASE_URL = os.getenv('DATABASE_URL')
-if DATABASE_URL:
-    # dj_database_url.parse returns a dict suitable for Django DATABASES
-    DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600),
+# DATABASE_URL = os.getenv('DATABASE_URL')
+# if DATABASE_URL:
+#     # dj_database_url.parse returns a dict suitable for Django DATABASES
+#     DATABASES = {
+#         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600),
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': os.getenv("dbname"),
+#             'USER': os.getenv("user"),
+#             'PASSWORD': os.getenv("password"),
+#             'HOST': os.getenv("host"),
+#             'PORT': os.getenv("port"),
+#         }
+#     }
+
+DATABASES = {
+    "default":{
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "db.sqlite3",
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv("dbname"),
-            'USER': os.getenv("user"),
-            'PASSWORD': os.getenv("password"),
-            'HOST': os.getenv("host"),
-            'PORT': os.getenv("port"),
-        }
-    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

@@ -1,7 +1,13 @@
-from django.urls import path
+from rest_framework import routers
+from django.urls import path, include
 from . import views
 
+router = routers.DefaultRouter()
+router.register(r"users", views.UserViewSet)
+router.register(r"groups", views.GroupViewSet)
+
 urlpatterns = [
+    path("", include(router.urls)),
     path("", views.lista_productos, name="lista_productos"),
     path("productos/agregar/", views.agregar_producto, name="agregar_producto"),
     path("productos/editar/<int:pk>/", views.editar_producto, name="editar_producto"),
