@@ -119,11 +119,3 @@ Accede al admin en http://127.0.0.1:8000/admin/ con el superusuario.
 - Comprueba logs de la plataforma si hay errores de conexión a la DB.
 
 ---
-
-Si quieres, puedo:
-
-- Añadir una acción del admin para borrado físico (hard delete) con confirmación.
-- Implementar soporte para editar ventas (ajustar stock por diferencias).
-- Añadir tests unitarios y CI básico.
-
-Indícame cuál de esas tareas quieres que haga a continuación.
