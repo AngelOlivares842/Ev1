@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Producto, Cliente, Venta
+from .models import Producto, Cliente, Venta, VentaDetalle
 from .forms import ProductoForm, ClienteForm, VentaForm
+from django.contrib.auth.models import Group, User
+from rest_framework import permissions, viewsets
+from .serializers import GroupSerializer, UserSerializer
+from .serializers import ProductoSerializer, ClienteSerializer, VentaDetalleSerializer, VentaSerializer
 
 def lista_productos(request):
     #Muestra lista de productos activos en el sistema
@@ -128,12 +132,6 @@ def lista_ventas(request):
     ventas = Venta.objects.all()
     return render(request, 'inventario/lista_ventas.html', {'ventas': ventas})
 
-from django.contrib.auth.models import Group, User
-from rest_framework import permissions, viewsets
-
-from .serializers import GroupSerializer, UserSerializer
-
-
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -151,4 +149,28 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     queryset = Group.objects.all().order_by("name")
     serializer_class = GroupSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class ProductoViewSet(viewsets.ModelViewSet):
+
+    queryset = Producto.objects.all().order_by("nombre")
+    serializer_class = ProductoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class ClienteViewSet(viewsets.ModelViewSet):
+
+    queryset = Cliente.objects.all().order_by("rut")
+    serializer_class = ClienteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class VentaViewSet(viewsets.ModelViewSet):
+
+    queryset = Venta.objects.all().order_by("cliente_rut")
+    serializer_class = VentaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class VentaDetalleViewSet(viewsets.ModelViewSet):
+    
+    queryset = VentaDetalle.objects.all().order_by("venta")
+    serializer_class = VentaDetalleSerializer
     permission_classes = [permissions.IsAuthenticated]

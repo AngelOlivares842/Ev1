@@ -6,11 +6,14 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r"users", views.UserViewSet)
 router.register(r"groups", views.GroupViewSet)
+router.register(r"productos", views.ProductoViewSet)
+router.register(r"clientes", views.ClienteViewSet)
+router.register(r"ventas", views.VentaViewSet)
+router.register(r"ventadetalle", views.VentaDetalleViewSet)
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("api/", include(router.urls)),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-
     path("", views.lista_productos, name="lista_productos"),
     path("productos/agregar/", views.agregar_producto, name="agregar_producto"),
     path("productos/editar/<int:pk>/", views.editar_producto, name="editar_producto"),
