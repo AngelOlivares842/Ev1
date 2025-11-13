@@ -21,5 +21,4 @@ urlpatterns = [
     path("ventas/", views.lista_ventas, name="lista_ventas"),
     path("ventas/registrar/", views.registrar_venta, name="registrar_venta"),
     path("clientes/registrar/<str:rut>/", views.registrar_cliente_con_rut, name="registrar_cliente_con_rut"),
-    
 ]

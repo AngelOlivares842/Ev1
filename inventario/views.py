@@ -6,12 +6,16 @@ from django.contrib.auth.models import Group, User
 from rest_framework import permissions, viewsets
 from .serializers import GroupSerializer, UserSerializer
 from .serializers import ProductoSerializer, ClienteSerializer, VentaDetalleSerializer, VentaSerializer
+from django.contrib.auth.decorators import login_required
+from rest_framework import permissions
 
+@login_required
 def lista_productos(request):
     #Muestra lista de productos activos en el sistema
     productos = Producto.objects.filter(activo=True)
     return render(request, 'inventario/lista_productos.html', {'productos': productos})
 
+@login_required
 def agregar_producto(request):
     #Vista para crear nuevos productos
     if request.method == 'POST':
@@ -24,6 +28,7 @@ def agregar_producto(request):
         form = ProductoForm()
     return render(request, 'inventario/agregar_producto.html', {'form': form})
 
+@login_required
 def editar_producto(request, pk):
     #Vista para modificar productos existentes
     producto = get_object_or_404(Producto, pk=pk)
@@ -42,6 +47,7 @@ def editar_producto(request, pk):
         'title': 'Editar Producto'
     })
 
+@login_required
 def eliminar_producto(request, pk):
     #Eliminación lógica de productos (cambia estado activo a False)
     producto = get_object_or_404(Producto, pk=pk)
@@ -52,6 +58,7 @@ def eliminar_producto(request, pk):
         return redirect('lista_productos')
     return render(request, 'inventario/eliminar_producto.html', {'producto': producto})
 
+@login_required
 def registrar_venta(request):
     #Vista principal para registrar nuevas ventas
     if request.method == 'POST':
@@ -111,6 +118,7 @@ def registrar_venta(request):
     
     return render(request, 'inventario/registrar_venta.html', {'form': form})
 
+@login_required
 def registrar_cliente_con_rut(request, rut):
     #Vista para completar registro de cliente habitual durante proceso de venta
     if request.method == 'POST':
@@ -127,6 +135,7 @@ def registrar_cliente_con_rut(request, rut):
     
     return render(request, 'inventario/registrar_cliente.html', {'form': form})
 
+@login_required
 def lista_ventas(request):
     #Muestra historial completo de todas las ventas
     ventas = Venta.objects.all()
@@ -140,7 +149,6 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
@@ -174,3 +182,4 @@ class VentaDetalleViewSet(viewsets.ModelViewSet):
     queryset = VentaDetalle.objects.all().order_by("venta")
     serializer_class = VentaDetalleSerializer
     permission_classes = [permissions.IsAuthenticated]
+
