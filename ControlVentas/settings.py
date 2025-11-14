@@ -33,7 +33,7 @@ SECRET_KEY = 'django-insecure-jnk4)76l^4+_gs^c$u$a=433s%2f3%1y^8@9spf^g64pl(4z==
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '.herokuapp.com', 'ventas.kalwrd.me', 'ev1-c25t.onrender.com']
+ALLOWED_HOSTS = ['localhost:4321','127.0.0.1', '.vercel.app', '.herokuapp.com', 'ventas.kalwrd.me', 'ev1-c25t.onrender.com']
 
 # Application definition
 
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'inventario',
 ]
@@ -67,6 +68,7 @@ SIMPLE_JWT = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Debe estar al principio
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -76,6 +78,33 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
     'whitenoise.middleware.WhiteNoiseMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4321",  # Puerto de Astro en desarrollo
+    "http://127.0.0.1:4321",
+    "http://localhost:3000",  # Por si usas otro puerto
+]
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 ROOT_URLCONF = 'ControlVentas.urls'

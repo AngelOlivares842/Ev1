@@ -7,7 +7,6 @@ from rest_framework import permissions, viewsets
 from .serializers import GroupSerializer, UserSerializer
 from .serializers import ProductoSerializer, ClienteSerializer, VentaDetalleSerializer, VentaSerializer
 from django.contrib.auth.decorators import login_required
-from rest_framework import permissions
 
 @login_required
 def lista_productos(request):
