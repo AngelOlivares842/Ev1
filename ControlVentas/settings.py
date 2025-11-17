@@ -93,7 +93,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4321",  # Puerto de Astro en desarrollo
     "http://127.0.0.1:4321",
     "http://localhost:3000",  # Por si usas otro puerto
-    'https://tienda-astro-django.vercel.app/',
+    'https://tienda-astro-django.vercel.app',
 ]
 
 CORS_ALLOW_METHODS = [
