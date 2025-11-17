@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
     '.herokuapp.com', 
     'ventas.kalwrd.me', 
     'ev1-c25t.onrender.com'
+    'tienda-astro-django-n0v5esyl2-angels-projects-72ef0e8e.vercel.app'
 ]
 
 # Application definition
