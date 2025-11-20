@@ -100,7 +100,7 @@ class VentaAdmin(admin.ModelAdmin):
 	readonly_fields = ('fecha_venta', 'total')
 	actions = [revertir_venta]
 	date_hierarchy = 'fecha_venta'
-	inlines = [VentaDetalleInline]
+	inlines = [VentaDetalleAdmin]
 	list_per_page = 50
 
 	def get_urls(self):
