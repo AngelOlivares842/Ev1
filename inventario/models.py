@@ -61,6 +61,9 @@ class VentaDetalle(models.Model):
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     subtotal = models.DecimalField(max_digits=12, decimal_places=2)
 
+    class Meta:
+        ordering = ['venta', 'producto']
+
     def __str__(self):
         return f"{self.producto.nombre} x {self.cantidad_vendida}"
 
