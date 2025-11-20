@@ -45,14 +45,6 @@ def revertir_venta(modeladmin, request, queryset):
 		venta.delete()
 
 
-class ClienteAdmin(admin.ModelAdmin):
-	list_display = ('rut', 'nombre', 'email', 'telefono', 'es_habitual', 'fecha_registro')
-	list_filter = ('es_habitual', ('fecha_registro', admin.DateFieldListFilter))
-	search_fields = ('rut', 'nombre', 'email')
-	actions = [marcar_habitual, marcar_no_habitual]
-	list_per_page = 50
-
-
 class ProductoAdmin(admin.ModelAdmin):
 	list_display = ('codigo', 'nombre', 'cantidad', 'precio', 'activo', 'fecha_creacion')
 	list_filter = ('activo', ('fecha_creacion', admin.DateFieldListFilter))
@@ -86,7 +78,15 @@ class ProductoAdmin(admin.ModelAdmin):
 		return qs.filter(activo=True)
 
 
-class VentaDetalleAdmin(admin.ModelAdmin):
+class ClienteAdmin(admin.ModelAdmin):
+	list_display = ('rut', 'nombre', 'email', 'telefono', 'es_habitual', 'fecha_registro')
+	list_filter = ('es_habitual', ('fecha_registro', admin.DateFieldListFilter))
+	search_fields = ('rut', 'nombre', 'email')
+	actions = [marcar_habitual, marcar_no_habitual]
+	list_per_page = 50
+
+
+class VentaDetalleAdmin(admin.TabularInline):
 	model = VentaDetalle
 	extra = 0
 	readonly_fields = ('subtotal', 'precio_unitario')
@@ -157,4 +157,5 @@ class VentaAdmin(admin.ModelAdmin):
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(Producto, ProductoAdmin)
 admin.site.register(Venta, VentaAdmin)
-admin.site.register(VentaDetalle, VentaDetalleAdmin)
+
+
