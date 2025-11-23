@@ -94,6 +94,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:4321",
     "http://localhost:3000",  # Por si usas otro puerto
     'https://astro-ventas.vercel.app',
+    'https://ventas.kalwrd.me/',
 ]
 
 CORS_ALLOW_METHODS = [
