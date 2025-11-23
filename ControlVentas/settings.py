@@ -41,7 +41,7 @@ ALLOWED_HOSTS = [
     '.herokuapp.com', 
     'ventas.kalwrd.me', 
     'ev1-c25t.onrender.com'
-    'tienda-astro-django.vercel.app'
+    'astro-ventas.vercel.app'
 ]
 
 # Application definition
@@ -93,7 +93,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4321",  # Puerto de Astro en desarrollo
     "http://127.0.0.1:4321",
     "http://localhost:3000",  # Por si usas otro puerto
-    'https://tienda-astro-django.vercel.app',
+    'https://astro-ventas.vercel.app',
 ]
 
 CORS_ALLOW_METHODS = [
