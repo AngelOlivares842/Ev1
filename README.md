@@ -1,6 +1,12 @@
 # ControlVentas (Aplicación de Control de Ventas)
 
-Proyecto Django simple para gestionar productos, clientes y ventas (cabecera + detalle).
+El sistema está diseñado para cubrir los siguientes flujos de negocio:
+
+- **Gestión de Inventario:** CRUD de productos con lógica de eliminación suave (soft-delete) para preservar el historial de datos.
+- **Ventas Transaccionales:** Registro de ventas (Cabecera) y sus líneas (Detalle).
+- **Control de Stock:** El sistema descuenta el stock automáticamente al confirmar una venta y valida la disponibilidad de unidades antes de guardar.
+- **Administración:** Panel administrativo optimizado con *inlines* para facilitar la carga de detalles de venta y acciones masivas.
+- **API REST:** Interfaz programable para integración con clientes frontend o móviles.
 
 Contiene:
 - Modelos: `Producto`, `Cliente`, `Venta` (cabecera) y `VentaDetalle` (líneas).
@@ -119,3 +125,12 @@ Accede al admin en http://127.0.0.1:8000/admin/ con el superusuario.
 - Comprueba logs de la plataforma si hay errores de conexión a la DB.
 
 ---
+
+
+|https://ventas-produccion-1f4baea70467.herokuapp.com/api/ |
+|https://ventas-produccion-1f4baea70467.herokuapp.com/api/productos/ |
+|https://ventas-produccion-1f4baea70467.herokuapp.com/api/clientes/ |
+|https://ventas-produccion-1f4baea70467.herokuapp.com/api/ventas/ |
+|https://ventas-produccion-1f4baea70467.herokuapp.com/api/ventadetalle/ |
+|https://ventas-produccion-1f4baea70467.herokuapp.com/api/users/ |
+|https://ventas-produccion-1f4baea70467.herokuapp.com/api/groups/ |
